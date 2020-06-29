@@ -1,3 +1,5 @@
+import { AuthService } from './../usuarios/auth.service';
+import { ModalService } from './detalle/modal.service';
 import { Component, OnInit } from '@angular/core';
 import { Cliente } from './cliente';
 import { ClienteService } from './cliente.service';
@@ -11,9 +13,13 @@ import { ActivatedRoute } from '@angular/router';
 export class ClientesComponent implements OnInit {
 
   clientes: Cliente[];
-  paginador:any;
+  paginador: any;
+  clienteSeleccionado: Cliente;
 
-  constructor(private clienteService: ClienteService, private activateRoute: ActivatedRoute) { }
+  constructor(private clienteService: ClienteService,
+    private modalService: ModalService,
+    private activateRoute: ActivatedRoute,
+    private authService:AuthService) { }
 
   ngOnInit() {
     this.activateRoute.paramMap.subscribe(params => {
@@ -24,6 +30,11 @@ export class ClientesComponent implements OnInit {
           this.paginador = clientes;
         }
       );
+    });
+
+    this.modalService.notificarUpload.subscribe(cliente => {
+      this.clientes.filter( x => x.id === cliente.id)
+        .forEach(x => x.foto = cliente.foto);
     });
   }
 
@@ -49,7 +60,12 @@ export class ClientesComponent implements OnInit {
           }
         );
       }
-    })
+    });
+  }
+
+  abrirModal(cliente:Cliente){
+    this.clienteSeleccionado = cliente;
+    this.modalService.abrirModal();
   }
 
 }

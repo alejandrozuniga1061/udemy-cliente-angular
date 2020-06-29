@@ -6,6 +6,7 @@ import { Observable, of, throwError } from 'rxjs';
 import swal from 'sweetalert2';
 import { map, catchError, tap } from 'rxjs/operators';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { Region } from './region';
 
 @Component({
   selector: 'app-form',
@@ -14,6 +15,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 export class FormComponent implements OnInit {
 
   private cliente: Cliente = new Cliente();
+  regiones: Region[];
   private titulo: string = "Crear cliente";
   private errors: string[];
 
@@ -24,6 +26,11 @@ export class FormComponent implements OnInit {
 
   ngOnInit() {
     this.cargarCliente();
+    this.cargarRegiones();
+  }
+
+  cargarRegiones(){
+    this.clienteService.getRegiones().subscribe(regiones => this.regiones = regiones);
   }
 
   cargarCliente():void{
@@ -66,6 +73,11 @@ export class FormComponent implements OnInit {
         this.errors = err.error.errors as string[];
       }
     );
+  }
+
+  compararRegion(o1:Region, o2:Region): boolean {
+
+    return  (o1 && o2 && o1.id === o2.id) || (!o1 && !o2) ;
   }
 
 }
